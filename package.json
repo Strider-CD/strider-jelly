@@ -1,14 +1,14 @@
 {
   "name": "strider-jelly",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Strider Jelly-proxy plugin",
   "main": "worker.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "dependencies" : {
-    "jelly-proxy" : "latest"
-  , "send" : "0.1.1"
+  "dependencies": {
+    "jelly-proxy": "latest",
+    "send": "0.1.1"
   },
   "repository": "",
   "author": "Peter Braden",
