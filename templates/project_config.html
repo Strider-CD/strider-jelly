@@ -13,30 +13,48 @@
     <hr />
 
     <div class='control-group'>
-      <label class='control-label'  for="qunit_path">URL of test content</label>
+      <label class='control-label'  for="jelly_url">URL of test content</label>
       <div class='controls'>
-        <input type='text' id = "qunit_path" name = "path" placeholder="http://localhost:8000/test.html" />
+        <input type='text' id = "jelly_url" name = "path" placeholder="http://localhost:8000/test.html" />
       </div>
     </div>
     <div class='control-group'>
-      <label class='control-label'  for="qunit_path">Port on which Jelly-Proxy listens</label>
+      <label class='control-label'  for="jelly_port">Port on which Jelly-Proxy listens</label>
       <div class='controls'>
-        <input type='text' id = "qunit_path" name = "path" placeholder="1077" />
+        <input type='text' id = "jelly_port" name = "port" placeholder="1077" />
       </div>
     </div>
 
     <div class='well script'>    
       <h4>Create Javascript Shim Payload</h4>
       <p>This code is inserted before the end body tag of all pages proxied through jelly-proxy</p>
-      <textarea id = "prepare" spellcheck="false" name ='payload' placeholder =";(function(){})();"></textarea>
+      <textarea id = "prepare" spellcheck="false" name ='payload' placeholder ="<script type='javascript'>;(function(){})();</script>"></textarea>
       <h5>Note:</h5>
       <p>You can 'phone home' to strider with ajax - the following urls correspond to plugin events:</p>
       <ul>
         <li>/_jelly/progress   :  'progress' </li>
         <li>/_jelly/results    :  'testDone' </li>
       </ul>
+      <p>Note, unless jquery is on the page already, you won't have access to it.</p>
     </div>
+  
+  
+    <div class='well'>
+      <h4>Static File Server</h4>
+      <p>It's often useful to run an additional static file server to serve your unit tests etc -
+      here you can optionally enable a basic server.</p>
+      <label class='control-label'  for="jelly_static">Enable</label>
+      <input type="checkbox" id="jelly_static" name = "static" />
+      <label class='control-label'  for="jelly_static_dir">Serve from path:</label>
+      <div class='controls'>
+        <input type='text' id = "jelly_static_dir" name = "port" placeholder="./test" />
+      </div>
+    </div>
+  
   </div>
+
+
+
   <div class='savecode affix' data-spy="affix" data-offset-top="20">
       <a id = "savecodebtn" href = "javascript://" class='btn btn-primary btn-large'>Save</a>
     </div>
