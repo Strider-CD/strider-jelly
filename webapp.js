@@ -30,11 +30,11 @@ module.exports = function(ctx, cb){
         status: "ok",
         errors: [],
         results: {
-          url: repo.get("jelly_url")
-        , port: repo.get("jelly_port")
-        , payload: repo.get("jelly_payload")
-        , serve_static: repo.get("jelly_static")
-        , static_dir: repoget("jelly_static_dir")
+          jelly_url: repo.get("jelly_url")
+        , jelly_port: repo.get("jelly_port")
+        , jelly_payload: repo.get("jelly_payload")
+        , jelly_static: repo.get("jelly_static")
+        , jelly_static_dir: repo.get("jelly_static_dir")
         }
       }
       return res.end(JSON.stringify(r, null, '\t'))
@@ -53,9 +53,13 @@ module.exports = function(ctx, cb){
     var url = req.param("url")
       , jelly_url = req.body["jelly_url"]
       , jelly_port = req.body["jelly_port"]
+      , jelly_payload = req.body["jelly_payload"]
+      , jelly_static = req.body["jelly_static"]
+      , jelly_static_dir = req.body["jelly_static_dir"]
+
 
     function error(err_msg) {
-      console.error("Strider-QUnit: postIndex() - %s", err_msg)
+      console.error("Strider-Jelly: postIndex() - %s", err_msg)
       var r = {
         errors: [err_msg],
         status: "error"
@@ -71,40 +75,45 @@ module.exports = function(ctx, cb){
       // must have access_level > 0 to be able to continue;
       if (access_level < 1) {
         console.debug(
-          "User %s tried to change qunit config but doesn't have admin privileges on %s (access level: %s)",
+          "User %s tried to change jelly config but doesn't have admin privileges on %s (access level: %s)",
           req.user.email, url, access_level);
-        return error("You must have access level greater than 0 in order to be able to configure qunit.");
+        return error("You must have access level greater than 0 in order to be able to configure jelly.");
       }
       var q = {$set:{}}
-      if (path) {
-        repo.set('qunit_path', path)
-      }
-      if (file) {
-        repo.set('qunit_file', file)
-      }
+
+      repo.set('jelly_url', jelly_url)
+      repo.set('jelly_port', jelly_port)
+      repo.set('jelly_payload', jelly_payload)
+      repo.set('jelly_static', jelly_static)
+      repo.set('jelly_static_dir', jelly_static_dir)
 
       var r = {
         status: "ok",
         errors: [],
         results: {
-          files: repo.get('qunit_file'),
-          path: repo.get('qunit_path')
+          set: [jelly_url, jelly_port, jelly_payload, jelly_static, jelly_static_dir]
         }
       }
-      if (file || path) {
-        req.user.save(function(err) {
-            if (err) {
-              var errmsg = "Error saving qunit config " + req.user.email + ": " + err;
-              return error(errmsg)
-            }
-            return res.end(JSON.stringify(r, null, '\t'))
-        })
-      } else {
-        return res.end(JSON.stringify(r, null, '\t'))
-      }
+      req.user.save(function(err) {
+          if (err) {
+            var errmsg = "Error saving jelly config " + req.user.email + ": " + err;
+            return error(errmsg)
+          }
+          return res.end(JSON.stringify(r, null, '\t'))
+      })
     })
 
   }
+
+  // Add webserver routes
+  ctx.route.get("/api/jelly",
+    ctx.middleware.require_auth,
+    ctx.middleware.require_params(["url"]),
+    getIndex)
+  ctx.route.post("/api/jelly",
+    ctx.middleware.require_auth,
+    ctx.middleware.require_params(["url"]),
+    postIndex)
 
 
   // Extend RepoConfig model with 'Jelly' properties
@@ -113,7 +122,7 @@ module.exports = function(ctx, cb){
       jelly_url: String,
       jelly_port: Number,
       jelly_payload: String,
-      jelly_static: Boolean
+      jelly_static: Boolean,
       jelly_static_dir: String
     })
   }

@@ -28,7 +28,7 @@
     <div class='well script'>    
       <h4>Create Javascript Shim Payload</h4>
       <p>This code is inserted before the end body tag of all pages proxied through jelly-proxy</p>
-      <textarea id = "prepare" spellcheck="false" name ='payload' placeholder ="<script type='javascript'>;(function(){})();</script>"></textarea>
+      <textarea id = "jelly_payload" spellcheck="false" name ='payload' placeholder ="<script type='javascript'>;(function(){})();</script>"></textarea>
       <h5>Note:</h5>
       <p>You can 'phone home' to strider with ajax - the following urls correspond to plugin events:</p>
       <ul>
@@ -55,39 +55,38 @@
 
 
 
-  <div class='savecode affix' data-spy="affix" data-offset-top="20">
-      <a id = "savecodebtn" href = "javascript://" class='btn btn-primary btn-large'>Save</a>
+  <div class='savejelly affix' data-spy="affix" data-offset-top="20">
+      <a id = "savejellybtn" href = "javascript://" class='btn btn-primary btn-large'>Save</a>
     </div>
   <script>
  
 $(function(){
   var repo = $("html").data().controllerParams.repo_url; // EWW!
-/*
-  $.getJSON("/custom/script", {url: repo}, function(res){
-    $.each(['prepare', 'test', 'deploy', 'cleanup'], function(){
-      var phase = this + ''
-      $("#" + phase).val(res.results[phase] || '');
+
+  $.getJSON("/api/jelly", {url: repo}, function(res){
+    console.log("!!", res)
+    $.each(['jelly_url', 'jelly_port', 'jelly_payload', 'jelly_static', 'jelly_static_dir'], function(){
+      var phase = '' + this 
+      $("#"+ phase).val(res.results[phase] || '');
     })
 
   })
 
 
-  $("#savecodebtn").click(function(){
-    var out = {}
+  $("#savejellybtn").click(function(){
+    var out = {url : repo}
 
-    $.each(['prepare', 'test', 'deploy', 'cleanup'], function(){
-      var phase = this + ''
-        , code = $("#" + phase).val();
-      out[phase] = code;
+    $.each(['url', 'port', 'payload', 'static', 'static_dir'], function(){
+      var code = $("#jelly_" + this).val();
+      out["jelly_" + this] = code;
     })
 
-    $.post('/custom/script', {url:repo, scripts:out}, function(res){
+    $.post('/api/jelly', out, function(res){
       if(res.errors) throw res.errors;
       alert("Saved!")
     })
 
   })  
-  */
 })
 
   </script>
