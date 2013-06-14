@@ -65,21 +65,26 @@ $(function(){
 
   $.getJSON("/api/jelly", {url: repo}, function(res){
     console.log("!!", res)
-    $.each(['jelly_url', 'jelly_port', 'jelly_payload', 'jelly_static', 'jelly_static_dir'], function(){
+    $.each(['jelly_url', 'jelly_port', 'jelly_payload', 'jelly_static_dir'], function(){
       var phase = '' + this 
       $("#"+ phase).val(res.results[phase] || '');
     })
 
+    if (res.results.jelly_static){
+      $("#jelly_static").attr("checked", "checked")
+    }
   })
 
 
   $("#savejellybtn").click(function(){
     var out = {url : repo}
 
-    $.each(['url', 'port', 'payload', 'static', 'static_dir'], function(){
+    $.each(['url', 'port', 'payload',  'static_dir'], function(){
       var code = $("#jelly_" + this).val();
       out["jelly_" + this] = code;
     })
+
+    out.jelly_static = $("#jelly_static").is(":checked")
 
     $.post('/api/jelly', out, function(res){
       if(res.errors) throw res.errors;

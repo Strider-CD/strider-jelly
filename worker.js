@@ -1,4 +1,6 @@
 var jp = require('jelly-proxy')
+  , url = require('url')
+  , path = require('path')
 
 module.exports = function(ctx, cb){
   var proxyServer
@@ -37,25 +39,34 @@ module.exports = function(ctx, cb){
       , uri = url.parse(jellyurl) 
       , proxyport = uri.port || 80
       , serveStatic = repoconf.jelly_static
+      , staticpath = path.join(ctx.workingDir, repoconf.jelly_static_dir || '.')
 
     ctx.browsertestPort = port
     ctx.browsertestPath = jellyurl
 
     var opts = {
       payload : payload
+    , logger : function(req){
+        console.log("[JellyProxy]", req.url)
+      }
     }
 
     proxyServer = jp(opts, handleReq, proxyport)
     proxyServer.listen(port);
+    console.log("JellyProxy:", port, " listening to traffic for", proxyport);
     
     if (serveStatic){
       var send = require('send')
         , http = require('http')
 
       staticServer = http.createServer(function(rq, rs){
-        send(rq, rq.url).pipe(rs); 
+        console.log("[static serve]", rq.url)
+        send(rq, rq.url)
+          .root(staticpath)
+          .pipe(rs); 
       })
       staticServer.listen(proxyport)
+      console.log("Static server:", proxyport, "serving", staticpath)
     }
 
   }
