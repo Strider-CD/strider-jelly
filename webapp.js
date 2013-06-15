@@ -135,4 +135,5 @@ module.exports = function(ctx, cb){
     id:"jelly_config",
   })
 
+  cb(null);
 }
