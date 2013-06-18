@@ -37,7 +37,7 @@ module.exports = function(ctx, cb){
       , port = repoconf.jelly_port
       , jellyurl = repoconf.jelly_url
 
-    if (! jellyurl) return;
+    if (! jellyurl) return cb(null, null);
 
     var uri = url.parse(jellyurl) 
       , proxyport = uri.port || 80
