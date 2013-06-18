@@ -75,7 +75,8 @@ module.exports = function(ctx, cb){
   }
 
   var cleanup = function(ctx, cb){
-    proxyServer.close()
+    if (proxyServer)
+      proxyServer.close()
     if (staticServer)
       staticServer.close()
   }
