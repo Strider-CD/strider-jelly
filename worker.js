@@ -36,7 +36,10 @@ module.exports = function(ctx, cb){
       , payload = repoconf.jelly_payload
       , port = repoconf.jelly_port
       , jellyurl = repoconf.jelly_url
-      , uri = url.parse(jellyurl) 
+
+    if (! jellyurl) return;
+
+    var uri = url.parse(jellyurl) 
       , proxyport = uri.port || 80
       , serveStatic = repoconf.jelly_static
       , staticpath = path.join(ctx.workingDir, repoconf.jelly_static_dir || '.')
