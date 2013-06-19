@@ -71,7 +71,8 @@ module.exports = function(ctx, cb){
       staticServer.listen(proxyport)
       console.log("Static server:", proxyport, "serving", staticpath)
     }
-
+    
+    cb(null, null);
   }
 
   var cleanup = function(ctx, cb){
@@ -79,6 +80,8 @@ module.exports = function(ctx, cb){
       proxyServer.close()
     if (staticServer)
       staticServer.close()
+
+    cb(null, null);
   }
 
   ctx.addBuildHook({
