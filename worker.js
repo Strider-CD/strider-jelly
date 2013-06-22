@@ -14,7 +14,7 @@ var bodyParse = function(cb){
     });
     req.on('end', function () {
       var post = qs.parse(body);
-      req.post = post;
+      req.post = JSON.parse(post.data);
       cb(req, res);
     })
   }
@@ -27,10 +27,11 @@ module.exports = function(ctx, cb){
   var prepare = function(ctx, cb){
 
     var handleProgress = function(req, res){
+      req.post.id = (regex.exec(req.post.url) || ["!", "?"])[1]
       console.log("[JELLY:Progress]", req.post)
       ctx.striderMessage(
         "[JELLY:Progress] Job:"
-        , req.post.url
+        , req.post.id
         , "->"
         , req.post.total
         , " run, "
@@ -48,13 +49,14 @@ module.exports = function(ctx, cb){
       
 
     var handleResults = function(req, res){
+      req.post.id = (regex.exec(req.post.url) || ["!", "?"])[1]
       console.log("[JELLY:Results]", req.post);// TODO Req params
       if (req.post.tracebacks){
         for (var i = 0; i<req.post.tracebacks.length; i++){
           ctx.striderMessage("\n\n[ERROR]" + req.post.tracebacks[i]);
         }
       }
-      ctx.events.emit("testDone", req.post) 
+      ctx.events.emit("testDone", req.post)
       res.writeHead(200)
       res.end()
     }
