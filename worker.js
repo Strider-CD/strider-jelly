@@ -1,6 +1,22 @@
 var jp = require('jelly-proxy')
   , url = require('url')
   , path = require('path')
+  , qs = require('querystring')
+
+
+var bodyParse = function(cb){
+  return function(req, res){
+    var body = ''
+    req.on('data', function (data) {
+      body += data;
+    });
+    req.on('end', function () {
+      var post = qs.parse(body);
+      req.post = post;
+      cb(req, res);
+    })
+  }
+}
 
 module.exports = function(ctx, cb){
   var proxyServer
@@ -9,23 +25,53 @@ module.exports = function(ctx, cb){
   var prepare = function(ctx, cb){
 
     var handleProgress = function(req, res){
-      console.log("[JELLY:Progress]", req);// TODO Req params
-      ctx.striderMessage("[JELLY:Progress]", req)
-    }
+      console.log("[JELLY:Progress]", req.post)
+      ctx.striderMessage(
+        "[JELLY:Progress] Job:"
+        , req.post.url
+        , "->"
+        , req.post.total
+        , " run, "
+        , req.post.failed
+        , " failures")
+      
+      if (req.post.tracebacks){
+        for (var i = 0; i<req.post.tracebacks.length; i++){
+          ctx.striderMessage("\n\n[ERROR]" + req.post.tracebacks[i]);
+        }
+      }
+      res.writeHead(200)
+      res.end()
+     }
+      
 
     var handleResults = function(req, res){
-      console.log("[JELLY:Results]", req);// TODO Req params
-      ctx.events.emit("testDone", res) 
+      console.log("[JELLY:Results]", req.post);// TODO Req params
+      if (req.post.tracebacks){
+        for (var i = 0; i<req.post.tracebacks.length; i++){
+          ctx.striderMessage("\n\n[ERROR]" + req.post.tracebacks[i]);
+        }
+      }
+      ctx.events.emit("testDone", req.post) 
+      res.writeHead(200)
+      res.end()
     }
 
     var routes = {
-      "_jelly/progress" : handleProgress
-    , "_jelly/results" : handleResults
+      "_jelly/progress" : bodyParse(handleProgress)
+    , "_jelly/results" : bodyParse(handleResults)
     }
 
     var handleReq = function(req, res){
-     if (routes[req.url]){
-       routes[req.url](req, res)
+     var url = req.url;
+
+     //strip leading '/'
+     if (url.indexOf('/') == 0){
+       url = url.slice(1);
+     }
+
+     if (routes[url]){
+       routes[url](req, res)
      } else {
       res.writeHead(404);
       res.end()
@@ -45,13 +91,14 @@ module.exports = function(ctx, cb){
       , staticpath = path.join(ctx.workingDir, repoconf.jelly_static_dir || '.')
 
     ctx.browsertestPort = port
-    ctx.browsertestPath = jellyurl
+    ctx.browsertestPath = uri.path
 
     var opts = {
       payload : payload
     , logger : function(req){
         console.log("[JellyProxy]", req.url)
       }
+    , tag: "</head>" 
     }
 
     proxyServer = jp(opts, handleReq, proxyport)
