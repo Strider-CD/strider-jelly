@@ -4,7 +4,7 @@
  * of Jasmine tests in the form of a Jasmine Custom
  * Reporter that talks back to the strider server.
  */
-//(function(){
+(function(){
 // Tiny Ajax Post
 var post = function (url, json, cb){
   var req;
@@ -86,5 +86,5 @@ jasmineEnv.updateInterval = 1000;
 var reporter = new JellyReporter();
 jasmineEnv.addReporter(reporter);
 
-//})();
+})();
 </script>

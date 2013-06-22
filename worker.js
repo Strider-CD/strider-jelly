@@ -3,6 +3,8 @@ var jp = require('jelly-proxy')
   , path = require('path')
   , qs = require('querystring')
 
+// URL jobID regex
+var regex = /^\/(.*?)\//; //Smallest possible first url segment;
 
 var bodyParse = function(cb){
   return function(req, res){
@@ -110,7 +112,15 @@ module.exports = function(ctx, cb){
         , http = require('http')
 
       staticServer = http.createServer(function(rq, rs){
-        console.log("[static serve]", rq.url)
+        // Parse JOBID out of url
+        rq.origUrl = rq.url;
+        var m = regex.exec(rq.url)
+        rq.jobID = m && m[1];
+        if (rq.jobID){
+          rq.url = rq.url.replace(regex, '/')
+        }
+
+        console.log("[static serve]", rq.url, "(", rq.jobID, ")")
         send(rq, rq.url)
           .root(staticpath)
           .pipe(rs); 
