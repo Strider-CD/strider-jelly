@@ -123,7 +123,7 @@ module.exports = function(ctx, cb){
         }
 
         console.log("[static serve]", rq.url, "(", rq.jobID, ")")
-        send(rq, rq.url)
+        send(rq, url.parse(rq.url).pathname)
           .root(staticpath)
           .pipe(rs); 
       })
