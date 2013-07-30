@@ -111,7 +111,7 @@ module.exports = function(ctx, cb){
     ctx.middleware.require_params(["url"]),
     getIndex)
   ctx.route.post("/api/jelly",
-    ctx.middleware.require_auth,
+    ctx.middleware.require_admin,
     ctx.middleware.require_params(["url"]),
     postIndex)
 
@@ -132,6 +132,9 @@ module.exports = function(ctx, cb){
   ctx.registerPanel('project_config', {
     src: path.join(__dirname, "templates", "project_config.html"),
     title: "Jelly-Proxy Config",
+    data: ['jelly_url', 'jelly_port', 'jelly_payload', 'jelly_static', 'jelly_static_dir'],
+    plugin_name: 'strider-jelly',
+    controller: 'JellyCtrl',
     id:"jelly_config",
   })
 
