@@ -1,99 +1,64 @@
-<div id = "#custom" class="tab-pane widget">
+<div id="#jelly-config" class="tab-pane widget">
   <style>
-   .script textarea{
-      height:100px; width:54em; font-family:monospace;
-      background-color:#111; color:#9f9; 
+    #jelly-config .script textarea {
+      height:100px;
+      width:54em;
+      font-family:monospace;
+      background-color:#111;
+      color:#9f9; 
       padding:1em;
       resize:vertical;
     }
-  .affix{position:fixed; top:180px; right:200px;}
+    #jelly-config .affix {
+      position:fixed;
+      top:180px;
+      right:200px;
+    }
   </style>
-  <div class='span8'>
-    <h2>Add Jelly-Proxy Shim</h2>
-    <hr />
+  <h2>Add Jelly-Proxy Shim</h2>
 
-    <div class='control-group'>
-      <label class='control-label'  for="jelly_url">URL of test content</label>
-      <div class='controls'>
-        <input type='text' id = "jelly_url" name = "path" placeholder="http://localhost:8000/test.html" />
-      </div>
+  <div class='control-group'>
+    <label class='control-label'  for="jelly_url">URL of test content</label>
+    <div class='controls'>
+      <input type='text' ng-model="data.jelly_url" placeholder="http://localhost:8000/test.html" />
     </div>
-    <div class='control-group'>
-      <label class='control-label'  for="jelly_port">Port on which Jelly-Proxy listens</label>
-      <div class='controls'>
-        <input type='text' id = "jelly_port" name = "port" placeholder="1077" />
-      </div>
+  </div>
+  <div class='control-group'>
+    <label class='control-label'  for="jelly_port">Port on which Jelly-Proxy listens</label>
+    <div class='controls'>
+      <input type='text' ng-model="data.jelly_port" placeholder="1077" />
     </div>
-
-    <div class='well script'>    
-      <h4>Create Javascript Shim Payload</h4>
-      <p>This code is inserted before the end body tag of all pages proxied through jelly-proxy</p>
-      <textarea id = "jelly_payload" spellcheck="false" name ='payload' placeholder ="<script type='javascript'>;(function(){})();</script>"></textarea>
-      <h5>Note:</h5>
-      <p>You can 'phone home' to strider with ajax - the following urls correspond to plugin events:</p>
-      <ul>
-        <li>/_jelly/progress   :  'progress' </li>
-        <li>/_jelly/results    :  'testDone' </li>
-      </ul>
-      <p>Note, unless jquery is on the page already, you won't have access to it.</p>
-    </div>
-  
-  
-    <div class='well'>
-      <h4>Static File Server</h4>
-      <p>It's often useful to run an additional static file server to serve your unit tests etc -
-      here you can optionally enable a basic server.</p>
-      <label class='control-label'  for="jelly_static">Enable</label>
-      <input type="checkbox" id="jelly_static" name = "static" />
-      <label class='control-label'  for="jelly_static_dir">Serve from path:</label>
-      <div class='controls'>
-        <input type='text' id = "jelly_static_dir" name = "port" placeholder="./test" />
-      </div>
-    </div>
-  
   </div>
 
-
-
-  <div class='savejelly affix' data-spy="affix" data-offset-top="20">
-      <a id = "savejellybtn" href = "javascript://" class='btn btn-primary btn-large'>Save</a>
+  <div class='well script'>    
+    <h4>Create Javascript Shim Payload</h4>
+    <p>This code is inserted before the end body tag of all pages proxied through jelly-proxy</p>
+    <textarea ng-model="data.jelly_payload" spellcheck="false" name='payload' placeholder="<script type='javascript'>;(function(){})();</script>"></textarea>
+    <h5>Note:</h5>
+    <p>You can 'phone home' to strider with ajax - the following urls correspond to plugin events:</p>
+    <ul>
+      <li>/_jelly/progress   :  'progress' </li>
+      <li>/_jelly/results    :  'testDone' </li>
+    </ul>
+    <p>Note, unless jquery is on the page already, you won't have access to it.</p>
+  </div>
+  
+  
+  <div class='well'>
+    <h4>Static File Server</h4>
+    <p>It's often useful to run an additional static file server to serve your unit tests etc -
+      here you can optionally enable a basic server.</p>
+    <label class='control-label'  for="jelly_static">Enable</label>
+    <input type="checkbox" ng-model="data.jelly_static">
+    <label class='control-label'  for="jelly_static_dir">Serve from path:</label>
+    <div class='controls'>
+      <input type='text' ng-model="data.jelly_static_dir" placeholder="./test" />
     </div>
-  <script>
- 
-$(function(){
-  var repo = $("html").data().controllerParams.repo_url; // EWW!
-
-  $.getJSON("/api/jelly", {url: repo}, function(res){
-    console.log("!!", res)
-    $.each(['jelly_url', 'jelly_port', 'jelly_payload', 'jelly_static_dir'], function(){
-      var phase = '' + this 
-      $("#"+ phase).val(res.results[phase] || '');
-    })
-
-    if (res.results.jelly_static){
-      $("#jelly_static").attr("checked", "checked")
-    }
-  })
-
-
-  $("#savejellybtn").click(function(){
-    var out = {url : repo}
-
-    $.each(['url', 'port', 'payload',  'static_dir'], function(){
-      var code = $("#jelly_" + this).val();
-      out["jelly_" + this] = code;
-    })
-
-    out.jelly_static = $("#jelly_static").is(":checked")
-
-    $.post('/api/jelly', out, function(res){
-      if(res.errors) throw res.errors;
-      alert("Saved!")
-    })
-
-  })  
-})
-
-  </script>
-
+  </div>
+  
+  <div class='savejelly affix' data-spy="affix" data-offset-top="20">
+    <button ng-click="save()" class="btn btn-primary btn-large">
+      Save
+    </button>
+  </div>
 </div>
