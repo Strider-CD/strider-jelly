@@ -135,10 +135,14 @@ module.exports = function(ctx, cb){
   }
 
   var cleanup = function(ctx, cb){
-    if (proxyServer)
+    if (proxyServer) {
       proxyServer.close()
-    if (staticServer)
+      proxyServer = null
+    }
+    if (staticServer) {
       staticServer.close()
+      proxyServer = null
+    }
 
     cb(null, null);
   }
