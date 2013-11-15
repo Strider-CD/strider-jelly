@@ -4,7 +4,7 @@
   "description": "Strider Jelly-proxy plugin",
   "main": "worker.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jshint && mocha -R tap"
   },
   "dependencies": {
     "jelly-proxy": "latest",
@@ -13,5 +13,10 @@
   "repository": "",
   "author": "Peter Braden",
   "license": "BSD",
-  "readmeFilename": "README.md"
+  "readmeFilename": "README.md",
+  "devDependencies": {
+    "chai": "~1.8.1",
+    "jshint": "~2.3.0",
+    "mocha": "~1.14.0"
+  }
 }
