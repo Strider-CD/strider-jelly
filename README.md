@@ -1,5 +1,7 @@
 # Strider-Jelly
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/Strider-CD/strider-jelly.svg)](https://greenkeeper.io/)
+
 A strider plugin to use the jelly-proxy to dynamically inject content into
 proxied web content.
 
