@@ -8,15 +8,15 @@
   },
   "dependencies": {
     "jelly-proxy": "latest",
-    "send": "0.1.1"
+    "send": "0.14.2"
   },
   "repository": "",
   "author": "Peter Braden",
   "license": "BSD",
   "readmeFilename": "README.md",
   "devDependencies": {
-    "chai": "~1.8.1",
-    "jshint": "~2.3.0",
-    "mocha": "~1.14.0"
+    "chai": "~3.5.0",
+    "jshint": "~2.9.4",
+    "mocha": "~3.2.0"
   }
 }
